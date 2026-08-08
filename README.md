@@ -104,7 +104,3 @@ zhuchenbin-liuyao-skills/
 
 本技能包基于传统文化典籍整理，用于研究交流。**占卜结果仅供参考，勿迷信；重大人生/财务决策请结合现实理性判断。**
 
-## 维护
-
-- 蒸馏流水线文档：`docs/PIPELINE_STATE.md`（注：在源工作区 `C:\Users\26878\zhuchenbin-liuyao\`）
-- 文本提取物：`C:\Users\26878\liuyao_pdf_txt\`（8 本可复用文本，供再蒸馏）
