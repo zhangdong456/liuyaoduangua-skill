@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "卦已经断成吉了，用神卯木发动，什么时候应事？",
+    "expected": "zhuchenbin-liuyao-yingqi",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "用神午火旬空，应期怎么推？是填空还是冲空？",
+    "expected": "zhuchenbin-liuyao-yingqi",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "这卦里有暗动之爻，应期会受影响吗？",
+    "expected": "zhuchenbin-liuyao-yingqi",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "这卦到底能不能成？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "bait"
+  },
+  {
+    "prompt": "静卦世爻用神都没有日月生扶，能推应期吗？",
+    "expected": "zhuchenbin-liuyao-yingqi",
+    "type": "boundary"
+  },
+  {
+    "prompt": "应期是越早越好还是看重叠信息？",
+    "expected": "zhuchenbin-liuyao-yingqi",
+    "type": "should_invoke"
+  }
+]

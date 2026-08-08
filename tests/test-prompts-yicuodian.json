@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "我断卦时把动爻与月令相合论成'月绊'断凶了，对吗？",
+    "expected": "zhuchenbin-liuyao-yicuodian",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "为什么我断的卦总是不准？帮我看看思路哪里错了",
+    "expected": "zhuchenbin-liuyao-yicuodian",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "用神克世是不是都是凶兆？",
+    "expected": "zhuchenbin-liuyao-yicuodian",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "自占病是不是应该取官鬼为用神？",
+    "expected": "zhuchenbin-liuyao-yicuodian",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "帮我完整断一下这卦的吉凶",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "bait"
+  },
+  {
+    "prompt": "短事之占出现化进退，该按进退断吗？",
+    "expected": "zhuchenbin-liuyao-yicuodian",
+    "type": "boundary"
+  },
+  {
+    "prompt": "心态卦里子孙旬空代表什么？",
+    "expected": "zhuchenbin-liuyao-yicuodian",
+    "type": "should_invoke"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "我想摇一卦问问最近的项目能不能成，应该怎么起卦？",
+    "expected": "zhuchenbin-liuyao-qigua",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "我刚才用三个硬币摇了六次，结果依次是：背背字、背字字、字字字、背背背、字背背、背字背。帮我排出卦来",
+    "expected": "zhuchenbin-liuyao-qigua",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "起卦时我把第一爻记成在最上面了，这卦还能用吗？",
+    "expected": "zhuchenbin-liuyao-qigua",
+    "type": "boundary"
+  },
+  {
+    "prompt": "我按梅花易数用时间起了一卦，能按你的六爻体系断吗？",
+    "expected": "zhuchenbin-liuyao-qigua",
+    "type": "boundary"
+  },
+  {
+    "prompt": "这卦世爻是申金，妻财寅木发动回头克世，请问是吉是凶？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "bait"
+  },
+  {
+    "prompt": "我同时想问财运和健康，能不能一卦一起问？",
+    "expected": "zhuchenbin-liuyao-qigua",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "背和字哪个算阳面？我有点记不清了",
+    "expected": "zhuchenbin-liuyao-qigua",
+    "type": "should_invoke"
+  }
+]

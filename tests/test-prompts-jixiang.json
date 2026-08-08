@@ -1,0 +1,32 @@
+[
+  {
+    "prompt": "这卦用神藏伏了，怎么通过藏爻和飞神分析细节？",
+    "expected": "zhuchenbin-liuyao-jixiang",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "我问的是和指定的某个人合作能否成，但卦象显示的是和别人合作更好？",
+    "expected": "zhuchenbin-liuyao-jixiang",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "世爻下面藏着的那个爻能代表卦主心里真正的想法吗？",
+    "expected": "zhuchenbin-liuyao-jixiang",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "这卦吉凶到底如何？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "bait"
+  },
+  {
+    "prompt": "占此应彼的卦象要怎么识别？",
+    "expected": "zhuchenbin-liuyao-jingyan-ku",
+    "type": "bait"
+  },
+  {
+    "prompt": "搭桥趋变法的使用条件是什么？",
+    "expected": "zhuchenbin-liuyao-jixiang",
+    "type": "should_invoke"
+  }
+]

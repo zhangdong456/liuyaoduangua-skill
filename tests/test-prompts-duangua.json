@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "帮我断卦：戌月壬申日占求财，得山火贲变雷火丰，妻财寅木持世被月合，兄弟午火发动克财，能得财吗？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "这卦用神妻财巳火动而克世爻酉金，但我是问终身财运，能断有财吗？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "boundary"
+  },
+  {
+    "prompt": "自占病，官鬼持世，是不是病很重治不好？",
+    "expected": "zhuchenbin-liuyao-yicuodian",
+    "type": "bait"
+  },
+  {
+    "prompt": "静卦用神持世但逢月破，到底是吉是凶？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "这卦的应期大概在什么时候？",
+    "expected": "zhuchenbin-liuyao-yingqi",
+    "type": "bait"
+  },
+  {
+    "prompt": "我想知道这卦除了吉凶，还显示了什么细节？",
+    "expected": "zhuchenbin-liuyao-jixiang",
+    "type": "bait"
+  },
+  {
+    "prompt": "三合局形成后，单爻的回头克还有意义吗？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "should_invoke"
+  }
+]

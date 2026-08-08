@@ -1,0 +1,37 @@
+[
+  {
+    "prompt": "我明明问的是小厮的病，卦象却显示我秋天功名有碍，这正常吗？",
+    "expected": "zhuchenbin-liuyao-jingyan-ku",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "起卦时我不小心把卦排错了，这卦还能断吗？",
+    "expected": "zhuchenbin-liuyao-jingyan-ku",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "我上次测女篮比赛没测准，是不是我技术不行？",
+    "expected": "zhuchenbin-liuyao-jingyan-ku",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "用周易炒期货有什么特别注意的？",
+    "expected": "zhuchenbin-liuyao-jingyan-ku",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "这卦用神旺相，能断吉吗？",
+    "expected": "zhuchenbin-liuyao-duangua",
+    "type": "bait"
+  },
+  {
+    "prompt": "为什么我的卦总是显示别的事情而不是我问的？",
+    "expected": "zhuchenbin-liuyao-jingyan-ku",
+    "type": "should_invoke"
+  },
+  {
+    "prompt": "遇到占此应彼，所问之事还要不要照断？",
+    "expected": "zhuchenbin-liuyao-jingyan-ku",
+    "type": "boundary"
+  }
+]
