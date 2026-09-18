@@ -4,7 +4,7 @@
 #  用法:
 #    ./install.sh                 # 自动探测并安装
 #    ./install.sh <目标目录>       # 安装到指定目录
-#  安装内容: SKILL.md (聚合总纲) + references/ (6 模块)
+#  安装内容: SKILL.md + references/ + personal_cases/ + personal_rules/ + rag/ + fine_tuning/
 # ============================================================
 set -euo pipefail
 
@@ -44,14 +44,21 @@ detect_target() {
 TARGET_DIR="$(detect_target)"
 DEST="$TARGET_DIR/$SKILL_NAME"
 
-# 安装: SKILL.md + references/
-rm -rf "$DEST"
+# 安装规则层；不要删除整个目标目录，否则会误删个人案例。
 mkdir -p "$DEST/references"
 cp "$SRC_DIR/SKILL.md" "$DEST/SKILL.md"
 cp "$SRC_DIR"/references/*.md "$DEST/references/"
 
+# 安装个人学习层的模板和脚本，保留用户已有的案例、索引和个人规则。
+mkdir -p "$DEST/personal_cases/raw" "$DEST/personal_cases/reviews" "$DEST/personal_rules" "$DEST/rag" "$DEST/fine_tuning"
+cp "$SRC_DIR"/personal_cases/README.md "$SRC_DIR"/personal_cases/schema.json "$SRC_DIR"/personal_cases/CASE_TEMPLATE.md "$SRC_DIR"/personal_cases/REVIEW_TEMPLATE.md "$SRC_DIR"/personal_cases/upsert-case.ps1 "$DEST/personal_cases/"
+cp "$SRC_DIR/personal_rules/RULES.md" "$DEST/personal_rules/"
+cp "$SRC_DIR"/rag/*.ps1 "$SRC_DIR/rag/README.md" "$DEST/rag/"
+cp "$SRC_DIR"/fine_tuning/policy.json "$SRC_DIR/fine_tuning/README.md" "$SRC_DIR/fine_tuning/prepare-dataset.ps1" "$DEST/fine_tuning/"
+touch "$DEST/personal_cases/cases.jsonl" "$DEST/personal_cases/index.jsonl" "$DEST/personal_rules/rules.jsonl" "$DEST/rag/source-map.jsonl"
+
 echo "✅ 已安装聚合 skill: $DEST"
-echo "   包含: SKILL.md + references/ ($(ls "$DEST/references" | wc -l) 个模块)"
+echo "   包含: SKILL.md + references/ ($(ls "$DEST/references" | wc -l) 个模块) + personal learning loop + automatic fine-tuning preparation"
 echo ""
 echo "   💡 可选: 如需安装 6 个独立 skill（触发更精准），请将以下目录逐个复制:"
 echo "      zhuchenbin-liuyao-qigua / -duangua / -yingqi / -jixiang / -jingyan-ku / -yicuodian"

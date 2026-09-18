@@ -1,0 +1,9 @@
+{
+  "min_reviewed_cases": 100,
+  "min_high_quality_correct": 30,
+  "min_rule_support": 3,
+  "min_rule_confidence": 0.75,
+  "min_prediction_confidence": 0.7,
+  "max_counter_cases": 0,
+  "error_tags": ["yongshen", "verdict", "timing", "detail", "tracking", "missing-rule", "chart"]
+}

@@ -24,20 +24,24 @@ zhuchenbin-liuyao-skills/
 ├── AGENTS.md               # AI 助手读取的安装/使用指引（Claude Code/Cursor 等自动识别）
 ├── install.sh              # Linux/macOS/Git Bash 一键安装脚本
 ├── install.ps1             # Windows PowerShell 一键安装脚本
-├── references/             # 6 个模块的完整内容
+├── references/             # 基础规则层（只读）
 │   ├── qigua.md            #   起卦与装卦（摇钱流程/阴阳/一事一卦/装卦口诀）
 │   ├── duangua.md          #   吉凶判断核心（七步/两层面/世用五局/感情婚姻专项/灾卦四公式）
 │   ├── yingqi.md           #   应期推断（20 公式/5 原则/变速器）
 │   ├── jixiang.md          #   细节取象（卦意 12 法/六神表/心念爻四步/双核卦）
 │   ├── jingyan-ku.md       #   特殊案例经验库（占此应彼五大规律/错卦正显/金融博弈/18 案例）
 │   └── yicuodian.md        #   易错点清单（38 条）
+├── personal_cases/         # 个人案例、反馈和低 token 索引
+├── personal_rules/         # 个人规则候选与已验证规则
+├── rag/                    # 本地索引构建和 Top-K 查询
+├── fine_tuning/            # 自动门槛检查与微调数据准备
 ├── docs/                   # 共享文档
 │   ├── BOOK_OVERVIEW.md    #   整书理解（结构/解释/批判/应用）
 │   ├── DIGEST.md           #   精华长文（不读全书只看精华）
 │   ├── GLOSSARY.md         #   47 条术语词典 + 核心口诀速查
 │   ├── INDEX.md            #   skill 引用图 + 组合断卦流程
 │   └── verified.md         #   三重验证记录
-├── tests/                  # 压力测试（40 条 prompt 独立盲测，通过率 40/40）
+├── tests/                  # 路由测试和个人案例评测
 ├── candidates/             # 提取素材审计（框架 18/原则 40/术语 44/案例 25/易错点 22）
 └── rejected/               # 淘汰单元审计
 ```
@@ -54,7 +58,7 @@ zhuchenbin-liuyao-skills/
 .\install.ps1 -Target "$env:USERPROFILE\.claude\skills"
 ```
 
-**手动安装**：把 `SKILL.md` + `references/` 复制到目标 skills 目录即可（如 `~/.claude/skills/zhuchenbin-liuyao/`）。无外部依赖，纯 Markdown。
+**手动安装**：把 `SKILL.md`、`references/`、`personal_cases/`、`personal_rules/` 和 `rag/` 复制到目标 skills 目录即可（如 `~/.claude/skills/zhuchenbin-liuyao/`）。个人案例与个人规则应定期单独备份。
 
 **各平台 skills 目录**：
 
@@ -69,6 +73,8 @@ zhuchenbin-liuyao-skills/
 ## 快速使用
 
 **作为 Hermes/Claude skill**：安装后，当用户提供六爻卦象时，加载 `SKILL.md`（聚合总纲）按七步断卦法执行；细节模块按需读 `references/` 对应文件。
+
+**个人案例闭环**：新卦先记录为 `personal_cases/` 中的 `pending` 案例；得到现实反馈后更新 `outcome` 和 `review`；只有经过多个案例复核的机制，才写入 `personal_rules/`。日常解卦只检索案例索引和少量摘要，不加载全部历史案例。每次更新后自动检查微调门槛，满足 100 个已复盘案例、30 个高质量正确案例、错误类型完成分类且存在通过多案例验证的规则候选时，自动生成 `fine_tuning/output/dataset.jsonl`。
 
 **核心方法**：
 
@@ -93,7 +99,7 @@ zhuchenbin-liuyao-skills/
 ## 验证与质量
 
 - 三重验证（V1 多书互证 / V2 预测力 / V3 独特性）全部通过
-- 40 条测试 prompt（含 10 条跨 skill 诱饵）独立盲测 40/40 命中
+- 40 条测试 prompt（含 10 条跨 skill 诱饵）独立盲测 40/40 命中；此数字代表路由测试，不代表预测准确率
 - 每个模块含 R（原文引用）/ I（方法论重写）/ A1（书中案例）/ A2（触发场景）/ E（可执行步骤）/ B（边界）六段式
 - **安装脚本回归测试**（改动 install.sh/install.ps1 后运行）：
   ```bash

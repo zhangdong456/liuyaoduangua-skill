@@ -12,7 +12,11 @@
 ├── AGENTS.md         # 本文件（AI 阅读）
 ├── install.sh        # Linux/macOS 一键安装
 ├── install.ps1       # Windows 一键安装
-├── references/       # 6 个模块（qigua/duangua/yingqi/jixiang/jingyan-ku/yicuodian）
+├── references/       # 基础规则层（只读，不直接写入个人反馈）
+├── personal_cases/   # 个人案例、反馈和低 token 索引
+├── personal_rules/   # 经过复盘后形成的个人规则候选
+├── rag/              # 本地检索索引构建和查询
+├── fine_tuning/      # 自动门槛检查和微调数据准备
 ├── docs/             # 深度文档（DIGEST/GLOSSARY/INDEX 等）
 ├── tests/            # 测试（40 条 prompt，通过率 40/40）
 ├── candidates/       # 提取素材审计
@@ -49,7 +53,15 @@
 2. 需要模块细节时，读 `references/` 对应文件：
    - `qigua.md` 起卦装卦 / `duangua.md` 吉凶判断（含感情婚姻专项、灾卦四公式）
    - `yingqi.md` 应期 / `jixiang.md` 细节取象 / `jingyan-ku.md` 特殊案例 / `yicuodian.md` 易错点
-3. 核心铁律：
+3. 个人案例闭环：
+   - 新卦先在 `personal_cases/` 建立 `pending` 案例，记录预测时可见信息和 `rule_version`
+   - 用户反馈后更新同一案例的 `outcome` / `review`，不要直接改写 `references/`
+   - 日常解卦只检索 `personal_cases/index.jsonl` 的少量摘要，不加载全部历史案例
+   - 只有多个独立案例支持且没有明显反例时，才将经验写入 `personal_rules/rules.jsonl`
+   - 每次案例更新后自动检查 `fine_tuning/policy.json`；达到门槛就生成 `fine_tuning/output/dataset.jsonl` 和报告，不需要用户手动统计案例
+   - 微调训练样本只取预测时可见的信息，不能把实际结果或复盘泄漏进输入；外部 fine-tuning 提交仍需明确确认
+
+4. 核心铁律：
    - 两层面分离（吉凶层循卦理、细节层取象），不可混用
    - 只适用于摇钱卦，不适用于梅花易数/时间/报数起卦
    - 卦象"只答心念不答口述"——先问清用户真实问题再取用神
@@ -61,6 +73,8 @@
 
 ## 维护说明
 
-- 修改 skill 内容时：改 `references/*.md` 和 `SKILL.md`，保持 `docs/`、`tests/` 同步
+- 修改规则层时：改 `references/*.md` 和 `SKILL.md`，保持 `docs/`、`tests/` 同步
+- 修改个人学习层时：只更新 `personal_cases/`、`personal_rules/`，再运行 `rag/build-index.ps1`
+- 修改微调准备层时：同步更新 `fine_tuning/` 和 `tests/verify-fine-tuning.ps1`
 - 修改后运行 `tests/` 中的测试 prompt 验证触发
 - 源工作区（提取文本、蒸馏流水线）在本地 `C:\Users\26878\liuyao_pdf_txt\` 与 `C:\Users\26878\zhuchenbin-liuyao\`，不随仓库分发

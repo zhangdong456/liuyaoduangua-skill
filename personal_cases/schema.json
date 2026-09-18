@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Liuyao Personal Case",
+  "type": "object",
+  "required": ["case_id", "source_type", "status", "question", "asked_at", "chart", "prediction", "outcome", "review", "rule_version"],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^(P|B)-[0-9]{4}-[0-9]{4}$"},
+    "source_type": {"enum": ["personal", "book", "imported"]},
+    "source_ref": {"type": ["string", "null"]},
+    "status": {"enum": ["pending", "reviewed", "promoted", "rejected"]},
+    "question": {"type": "string"},
+    "asked_at": {"type": "string"},
+    "horizon": {"type": ["string", "null"]},
+    "context": {"type": "object"},
+    "chart": {"type": "object"},
+    "prediction": {
+      "type": "object",
+      "required": ["verdict", "confidence", "evidence_rules"],
+      "properties": {
+        "yongshen": {"type": "array"},
+        "verdict": {"type": "string"},
+        "timing": {"type": "array"},
+        "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "evidence_rules": {"type": "array"}
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["pending", "correct", "partial", "wrong", "unverifiable"]},
+        "occurred_at": {"type": ["string", "null"]},
+        "description": {"type": ["string", "null"]}
+      }
+    },
+    "review": {
+      "type": "object",
+      "properties": {
+        "correct_parts": {"type": "array"},
+        "wrong_parts": {"type": "array"},
+        "error_tags": {"type": "array"},
+        "new_rule_candidate": {"type": ["string", "null"]}
+      }
+    },
+    "rule_version": {"type": "string"},
+    "privacy": {"enum": ["anonymized", "private"]}
+  }
+}
