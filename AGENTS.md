@@ -25,6 +25,15 @@
 
 ## 如何安装（当用户要求安装时）
 
+### 本机 Hermes（liuyao profile）：无需安装，单源直读（2026-09-22 起）
+
+本机 Hermes 不再复制技能文件，而是通过 profile 配置直读本仓库：
+
+- `profiles/liuyao/config.yaml` 中 `skills.external_dirs: [D:/AI/Skills/liuyaoduangua-skill]` 指向本仓库**父目录**，聚合 `SKILL.md` 与父目录下 6 个薄壳技能（`../zhuchenbin-liuyao-*/SKILL.md`，仓库外、机器本地）均由此发现；
+- 薄壳只存 frontmatter + 指向 `references/<mod>.md` 的指针，规则内容唯一来源在 `references/`——**勿把规则内容复制进任何 Hermes 目录**；
+- 因“同名本地优先”，**绝不要把本仓库安装进 Hermes profile 的 skills 目录**（install 脚本也不要自动探测 Hermes），否则本地副本会遮蔽直读的仓库版；
+- 修改 `references/` 或 `SKILL.md` 后 commit+push（或本地直接改文件），Hermes 下个会话自动生效，无同步步骤；仅当改动 frontmatter 的 `name`/`description` 时，需同步更新仓库外对应薄壳的 frontmatter。
+
 ### 方式一：一键脚本（推荐）
 ```bash
 # Linux/macOS / Git Bash
@@ -44,7 +53,7 @@
 |---|---|
 | Claude Code / 通用 | `~/.claude/skills/` |
 | Cursor | `~/.cursor/skills/` 或项目级 `.cursor/skills/` |
-| Hermes | `$HERMES_HOME/profiles/<profile>/skills/`（Windows 默认 `%LOCALAPPDATA%\hermes\profiles\liuyao\skills`） |
+| Hermes | 本机 liuyao profile 用 `skills.external_dirs` 直读本仓库，**勿复制安装**（见上文“本机 Hermes”）；其他 profile/机器才复制到 `$HERMES_HOME/profiles/<profile>/skills/` |
 
 ## 如何用（当用户发卦时）
 
@@ -76,6 +85,7 @@
 ## 维护说明
 
 - 修改规则层时：改 `references/*.md` 和 `SKILL.md`，保持 `docs/`、`tests/` 同步
+- 本机 Hermes 单源直读：改完即生效，无需同步；仅改 name/description 时同步仓库外薄壳 frontmatter
 - 修改个人学习层时：只更新 `personal_cases/`、`personal_rules/`，再运行 `rag/build-index.ps1`
 - 修改微调准备层时：同步更新 `fine_tuning/` 和 `tests/verify-fine-tuning.ps1`
 - 修改后运行 `tests/` 中的测试 prompt 验证触发

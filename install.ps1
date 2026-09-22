@@ -1,9 +1,10 @@
-# ============================================================
+﻿# ============================================================
 #  zhuchenbin-liuyao skills 一键安装脚本 (Windows PowerShell)
 #  用法:
 #    .\install.ps1                 # 自动探测并安装
 #    .\install.ps1 -Target <目录>   # 安装到指定目录
 #  安装内容: SKILL.md + references/ + personal_cases/ + personal_rules/ + rag/ + fine_tuning/
+#  注意: 本机 Hermes(liuyao) 走 skills.external_dirs 直读仓库, 勿安装进 Hermes profile(同名本地优先会遮蔽直读版)
 # ============================================================
 param(
     [string]$Target = ""
@@ -19,9 +20,8 @@ function Detect-Target {
         return $Target
     }
     $candidates = @()
-    # Hermes (Windows)
-    $hermesHome = $env:HERMES_HOME
-    if ($hermesHome) { $candidates += "$hermesHome\profiles\liuyao\skills" }
+    # Hermes 不做自动探测: liuyao profile 用 skills.external_dirs 直读仓库,
+    # 装进 profile 会因同名本地优先遮蔽直读版 (见 AGENTS.md「本机 Hermes」)。
     $candidates += "$env:USERPROFILE\.claude\skills"          # Claude Code
     $candidates += "$env:USERPROFILE\.cursor\skills"          # Cursor
     foreach ($d in $candidates) {
@@ -33,6 +33,11 @@ function Detect-Target {
 }
 
 $TargetDir = Detect-Target
+
+# 显式指定 Hermes profile 路径时仍允许, 但警告会遮蔽 external_dirs 直读版
+if ($Target -match "hermes[\\/]profiles") {
+    Write-Warning "目标是 Hermes profile skills 目录: 本地副本会遮蔽 skills.external_dirs 直读的仓库版, 建议改用 external_dirs (见 AGENTS.md)。"
+}
 $Dest = Join-Path $TargetDir $SkillName
 
 # 安装规则层；不要删除整个目标目录，否则会误删个人案例。
@@ -54,5 +59,6 @@ $moduleCount = (Get-ChildItem "$Dest\references\*.md").Count
 Write-Host "✅ 已安装聚合 skill: $Dest" -ForegroundColor Green
 Write-Host "   包含: SKILL.md + references/ ($moduleCount 个模块) + personal learning loop + automatic fine-tuning preparation" -ForegroundColor Green
 Write-Host ""
-Write-Host "   💡 可选: 如需安装 6 个独立 skill（触发更精准），请将以下目录逐个复制:" -ForegroundColor Cyan
+Write-Host "   💡 可选: 6 个独立 skill (触发更精准) = 复制 references/<mod>.md 为目标目录的 SKILL.md:" -ForegroundColor Cyan
 Write-Host "      zhuchenbin-liuyao-qigua / -duangua / -yingqi / -jixiang / -jingyan-ku / -yicuodian" -ForegroundColor Cyan
+Write-Host "   ⚠️ 本机 Hermes(liuyao) 走 skills.external_dirs 直读仓库+父目录薄壳, 勿安装进 Hermes profile." -ForegroundColor Yellow
