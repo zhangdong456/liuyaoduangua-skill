@@ -5,6 +5,7 @@
 #    ./install.sh                 # 自动探测并安装
 #    ./install.sh <目标目录>       # 安装到指定目录
 #  安装内容: SKILL.md + references/ + personal_cases/ + personal_rules/ + rag/ + fine_tuning/
+#  注意: 本机 Hermes(liuyao) 走 skills.external_dirs 直读仓库, 勿安装进 Hermes profile(同名本地优先会遮蔽直读版)
 # ============================================================
 set -euo pipefail
 
@@ -23,8 +24,8 @@ detect_target() {
     fi
     # 2. 常见平台自动探测
     local candidates=()
-    # Hermes (Linux/macOS)
-    [[ -n "${HERMES_HOME:-}" ]] && candidates+=("$HERMES_HOME/profiles/liuyao/skills")
+    # Hermes 不做自动探测: liuyao profile 用 skills.external_dirs 直读仓库,
+    # 装进 profile 会因同名本地优先遮蔽直读版 (见 AGENTS.md「本机 Hermes」)。
     # Claude Code / Anthropic 标准
     candidates+=("$HOME/.claude/skills")
     # Cursor
@@ -42,6 +43,11 @@ detect_target() {
 }
 
 TARGET_DIR="$(detect_target)"
+
+# 显式指定 Hermes profile 路径时仍允许, 但警告会遮蔽 external_dirs 直读版
+if [[ "$TARGET" == *hermes/profiles* || "$TARGET" == *hermes\profiles* ]]; then
+    echo "⚠️ 目标是 Hermes profile skills 目录: 本地副本会遮蔽 skills.external_dirs 直读的仓库版, 建议改用 external_dirs (见 AGENTS.md)。" >&2
+fi
 DEST="$TARGET_DIR/$SKILL_NAME"
 
 # 安装规则层；不要删除整个目标目录，否则会误删个人案例。
@@ -60,5 +66,6 @@ touch "$DEST/personal_cases/cases.jsonl" "$DEST/personal_cases/index.jsonl" "$DE
 echo "✅ 已安装聚合 skill: $DEST"
 echo "   包含: SKILL.md + references/ ($(ls "$DEST/references" | wc -l) 个模块) + personal learning loop + automatic fine-tuning preparation"
 echo ""
-echo "   💡 可选: 如需安装 6 个独立 skill（触发更精准），请将以下目录逐个复制:"
+echo "   💡 可选: 6 个独立 skill (触发更精准) = 复制 references/<mod>.md 为目标目录的 SKILL.md:"
 echo "      zhuchenbin-liuyao-qigua / -duangua / -yingqi / -jixiang / -jingyan-ku / -yicuodian"
+echo "   ⚠️ 本机 Hermes(liuyao) 走 skills.external_dirs 直读仓库+父目录薄壳, 勿安装进 Hermes profile."

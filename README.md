@@ -66,13 +66,13 @@ zhuchenbin-liuyao-skills/
 |---|---|
 | Claude Code / 通用 | `~/.claude/skills/` |
 | Cursor | `~/.cursor/skills/` 或项目级 `.cursor/skills/` |
-| Hermes | `$HERMES_HOME/profiles/<profile>/skills/`（Windows 默认 `%LOCALAPPDATA%\hermes\profiles\liuyao\skills`） |
+| Hermes | 本机 liuyao profile 用 `skills.external_dirs` 直读本仓库，**勿复制安装**（见 `AGENTS.md`「本机 Hermes」）；其他 profile/机器才复制到 `$HERMES_HOME/profiles/<profile>/skills/` |
 
 > 💡 AI 助手（如 Claude Code / Cursor / Hermes）读取本仓库时，请先读 `AGENTS.md` —— 内含完整的安装与使用指引。也可直接运行上面的安装脚本。
 
 ## 快速使用
 
-**作为 Hermes/Claude skill**：安装后，当用户提供六爻卦象时，加载 `SKILL.md`（聚合总纲）按七步断卦法执行；细节模块按需读 `references/` 对应文件。
+**作为 Hermes/Claude skill**：本机 Hermes（liuyao profile）经 `skills.external_dirs` 直读本仓库，无需安装；其他平台安装后，当用户提供六爻卦象时，加载 `SKILL.md`（聚合总纲）按七步断卦法执行；细节模块按需读 `references/` 对应文件。
 
 **个人案例闭环**：新卦先记录为 `personal_cases/` 中的 `pending` 案例；得到现实反馈后更新 `outcome` 和 `review`；只有经过多个案例复核的机制，才写入 `personal_rules/`。日常解卦只检索案例索引和少量摘要，不加载全部历史案例。每次更新后自动检查微调门槛，满足 100 个已复盘案例、30 个高质量正确案例、错误类型完成分类且存在通过多案例验证的规则候选时，自动生成 `fine_tuning/output/dataset.jsonl`。
 
