@@ -1,16 +1,41 @@
 [CmdletBinding()]
 param(
-  [string]$Root = (Split-Path -Parent $PSScriptRoot),
-  [string]$OutputPath = (Join-Path $PSScriptRoot 'index.jsonl')
+  [string]$Root,
+  [string]$OutputPath
 )
 
 $ErrorActionPreference = 'Stop'
+$scriptRoot = $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
+  $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrWhiteSpace($Root)) {
+  $Root = Split-Path -Parent $scriptRoot
+}
+if ([string]::IsNullOrWhiteSpace($OutputPath)) {
+  $OutputPath = Join-Path $scriptRoot 'index.jsonl'
+}
 $records = [System.Collections.Generic.List[object]]::new()
 
 function Add-TextChunks {
   param([string]$Path, [string]$SourceType)
-  $relative = [System.IO.Path]::GetRelativePath($Root, $Path).Replace('\', '/')
-  $text = Get-Content -Raw -LiteralPath $Path
+  # Windows PowerShell 5.1/.NET Framework does not provide
+  # System.IO.Path.GetRelativePath (it was added in newer .NET versions).
+  # All indexed files are descendants of $Root, so a normalized prefix
+  # calculation is sufficient and keeps this script compatible with both
+  # Windows PowerShell 5.1 and newer PowerShell/.NET runtimes.
+  $rootFull = [System.IO.Path]::GetFullPath($Root).TrimEnd('\', '/')
+  $pathFull = [System.IO.Path]::GetFullPath($Path)
+  if ($pathFull.Equals($rootFull, [System.StringComparison]::OrdinalIgnoreCase)) {
+    $relative = ''
+  } elseif ($pathFull.StartsWith($rootFull + [System.IO.Path]::DirectorySeparatorChar, [System.StringComparison]::OrdinalIgnoreCase) -or
+            $pathFull.StartsWith($rootFull + [System.IO.Path]::AltDirectorySeparatorChar, [System.StringComparison]::OrdinalIgnoreCase)) {
+    $relative = $pathFull.Substring($rootFull.Length).TrimStart('\', '/')
+  } else {
+    throw "Path '$Path' is outside index root '$Root'."
+  }
+  $relative = $relative.Replace('\', '/')
+  $text = Get-Content -Raw -Encoding UTF8 -LiteralPath $Path
   $chunks = [regex]::Split($text, '(?m)(?=^#{1,4}\s+)')
   $n = 0
   foreach ($chunk in $chunks) {
@@ -31,12 +56,12 @@ Get-ChildItem -LiteralPath (Join-Path $Root 'references') -Filter '*.md' -File -
 }
 
 Get-ChildItem -LiteralPath (Join-Path $Root 'personal_rules') -Filter '*.md' -File -Recurse | ForEach-Object {
-  Add-TextChunks -Path $_.FullName -SourceType 'personal_rule'
+  Add-TextChunks -Path $_.FullName -SourceType 'learning_document'
 }
 
 $ruleStore = Join-Path $Root 'personal_rules/rules.jsonl'
 if (Test-Path -LiteralPath $ruleStore) {
-  Get-Content -LiteralPath $ruleStore | ForEach-Object {
+  Get-Content -Encoding UTF8 -LiteralPath $ruleStore | ForEach-Object {
     if ([string]::IsNullOrWhiteSpace($_)) { return }
     $rule = $_ | ConvertFrom-Json
     $summaryParts = @(
@@ -59,7 +84,7 @@ if (Test-Path -LiteralPath $ruleStore) {
 
 $caseStore = Join-Path $Root 'personal_cases/cases.jsonl'
 if (Test-Path -LiteralPath $caseStore) {
-  Get-Content -LiteralPath $caseStore | ForEach-Object {
+  Get-Content -Encoding UTF8 -LiteralPath $caseStore | ForEach-Object {
     if ([string]::IsNullOrWhiteSpace($_)) { return }
     $case = $_ | ConvertFrom-Json
     $summaryParts = @(
@@ -75,6 +100,11 @@ if (Test-Path -LiteralPath $caseStore) {
       topic = $case.context.topic
       keywords = $case.keywords
       rule_ids = $case.prediction.evidence_rules
+      validation = [pscustomobject]@{
+        result = $case.outcome.status
+        error_tags = $case.review.error_tags
+        evidence_use = if ($case.outcome.status -eq 'correct') { 'verified_example' } elseif ($case.outcome.status -in @('wrong', 'partial')) { 'counterexample_check_errors' } else { 'not_verified' }
+      }
       text = ($summaryParts -join ' | ')
     })
   }

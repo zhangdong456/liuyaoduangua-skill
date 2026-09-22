@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-09-20T18:24:30.4975920+08:00",
+  "ready": false,
+  "metrics": {
+    "reviewed_cases": 3,
+    "high_quality_correct": 0,
+    "error_cases": 2,
+    "error_types_classified": false,
+    "verified_rule_candidates": 0
+  },
+  "policy": {
+    "min_reviewed_cases": 100,
+    "min_high_quality_correct": 30,
+    "min_rule_support": 3,
+    "min_rule_confidence": 0.75,
+    "min_prediction_confidence": 0.7,
+    "max_counter_cases": 0,
+    "error_tags": [
+      "yongshen",
+      "verdict",
+      "timing",
+      "detail",
+      "tracking",
+      "missing-rule",
+      "chart"
+    ]
+  },
+  "output_files": "status.json"
+}

@@ -7,3 +7,6 @@
 5. 当时是否提前知道结果，或存在事后信息污染？
 6. 这次复盘能否抽象成跨场景规则？
 7. 是否存在反例？如果没有多个独立案例，只保留为 `candidate`。
+8. 为待评估规则补 checked_rules、supported_rules、counter_rules、rule_checks；已检查不适用也写明理由。同一事件不能重复计数。
+9. 检查预测时冻结的 shadow_predictions，候选规则是否在新的独立事件上提前给出正确判断？事后改解释不算验证。
+10. 有纠错则追加 corrections，保留原预测；有新反例则暂停 active，再评估范围或撤销。

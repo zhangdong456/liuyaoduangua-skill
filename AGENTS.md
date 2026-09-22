@@ -58,6 +58,8 @@
    - 用户反馈后更新同一案例的 `outcome` / `review`，不要直接改写 `references/`
    - 日常解卦只检索 `personal_cases/index.jsonl` 的少量摘要，不加载全部历史案例
    - 只有多个独立案例支持且没有明显反例时，才将经验写入 `personal_rules/rules.jsonl`
+   - 经验先入 candidate，预测检索只用 active；升级前运行 personal_rules/test-rule-evidence.ps1。至少 3 个独立 event_id 支持，至少 1 个提出规则后的影子预测验证，所有已复盘案例已检查适用性且无反例
+   - 首次保存后预测字段冻结；反馈只补 outcome/review/status。历史检索摘要的验证标签必须保留；错误断语不作为正面范例
    - 每次案例更新后自动检查 `fine_tuning/policy.json`；达到门槛就生成 `fine_tuning/output/dataset.jsonl` 和报告，不需要用户手动统计案例
    - 微调训练样本只取预测时可见的信息，不能把实际结果或复盘泄漏进输入；外部 fine-tuning 提交仍需明确确认
 

@@ -7,6 +7,7 @@
     "case_id": {"type": "string", "pattern": "^(P|B)-[0-9]{4}-[0-9]{4}$"},
     "source_type": {"enum": ["personal", "book", "imported"]},
     "source_ref": {"type": ["string", "null"]},
+    "event_id": {"type": "string", "minLength": 1},
     "status": {"enum": ["pending", "reviewed", "promoted", "rejected"]},
     "question": {"type": "string"},
     "asked_at": {"type": "string"},

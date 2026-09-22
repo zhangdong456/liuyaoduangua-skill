@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
   [string]$Root = (Split-Path -Parent $PSScriptRoot),
   [string]$CasesPath = (Join-Path $Root 'personal_cases/cases.jsonl'),
@@ -10,6 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $policyPath = Join-Path $PSScriptRoot 'policy.json'
 $policy = Get-Content -Raw -LiteralPath $policyPath | ConvertFrom-Json
+. (Join-Path $Root 'personal_rules/test-rule-evidence.ps1')
 
 function Read-Jsonl {
   param([string]$Path)
@@ -37,7 +38,7 @@ function Get-ChartText {
 
 $cases = @(Read-Jsonl -Path $CasesPath)
 $rules = @(Read-Jsonl -Path $RulesPath)
-$reviewStatuses = @('reviewed', 'promoted', 'rejected')
+$reviewStatuses = @('reviewed', 'promoted')
 $resultStatuses = @('correct', 'partial', 'wrong')
 $reviewed = @($cases | Where-Object {
   $_.status -in $reviewStatuses -and
@@ -47,6 +48,7 @@ $reviewed = @($cases | Where-Object {
 
 $highQualityCorrect = @($reviewed | Where-Object {
   $_.outcome.status -eq 'correct' -and
+  @($_.review.corrections | Where-Object { $_ }).Count -eq 0 -and
   [double]$_.prediction.confidence -ge [double]$policy.min_prediction_confidence -and
   (Get-Array $_.review.correct_parts).Count -gt 0 -and
   -not [string]::IsNullOrWhiteSpace([string]$_.question) -and
@@ -71,8 +73,7 @@ function Test-VerifiedRule {
   if ([double]$Rule.confidence -lt [double]$Policy.min_rule_confidence) { return $false }
   $supporting = @(Get-Array $Rule.supporting_cases)
   $counter = @(Get-Array $Rule.counter_cases)
-  $validSupport = @($supporting | Where-Object { $ReviewedIds.ContainsKey([string]$_) })
-  return $validSupport.Count -ge [int]$Policy.min_rule_support -and $counter.Count -le [int]$Policy.max_counter_cases
+  return (Test-RuleEvidence -Rule $Rule -Cases $cases -MinSupport ([int]$Policy.min_rule_support) -MinConfidence ([double]$Policy.min_rule_confidence))
 }
 $verifiedRules = @($rules | Where-Object { Test-VerifiedRule -Rule $_ -ReviewedIds $reviewedIds -Policy $policy })
 
@@ -114,6 +115,9 @@ if ($ready) {
   }
   $datasetRows | Set-Content -LiteralPath $datasetPath -Encoding UTF8
 }
+elseif (Test-Path -LiteralPath $datasetPath) {
+  Remove-Item -LiteralPath $datasetPath -Force
+}
 
 $status = [pscustomobject]@{
   generated_at = (Get-Date).ToString('o')
@@ -147,3 +151,4 @@ $reportLines = @(
 $reportLines | Set-Content -LiteralPath $reportPath -Encoding UTF8
 
 if (-not $Quiet) { $status | ConvertTo-Json -Depth 10 }
+

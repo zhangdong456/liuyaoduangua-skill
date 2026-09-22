@@ -15,14 +15,17 @@ try {
   for ($i = 1; $i -le 30; $i++) {
     $cases += [pscustomobject]@{
       case_id = "P-2026-$('{0:D4}' -f $i)"
+      event_id = "event-$i"
       status = 'reviewed'
       question = "高质量正确案例 $i"
-      asked_at = '2026-01-01T10:00:00+08:00'
+      asked_at = '2026-01-03T10:00:00+08:00'
       chart = [pscustomobject]@{ topic = '事业'; raw = "卦面 $i" }
       prediction = [pscustomobject]@{
         verdict = '可成'
         confidence = 0.85
         evidence_rules = @('R-001', 'P-R-001')
+        shadow_rules = @('P-R-001')
+        shadow_predictions = @(@{rule_id='P-R-001';verdict='可成'})
       }
       outcome = [pscustomobject]@{ status = 'correct'; occurred_at = '2026-02-01T10:00:00+08:00'; description = '结果符合' }
       review = [pscustomobject]@{ correct_parts = @('主线判断正确'); wrong_parts = @(); error_tags = @(); new_rule_candidate = '求对方答应之事优先看应爻动态' }
@@ -44,10 +47,19 @@ try {
   }
   $cases | ForEach-Object { $_ | ConvertTo-Json -Compress -Depth 8 } | Set-Content -LiteralPath $casesPath -Encoding UTF8
 
+  foreach ($case in $cases) {
+    $case.review | Add-Member -NotePropertyName checked_rules -NotePropertyValue @('P-R-001')
+    $case.review | Add-Member -NotePropertyName supported_rules -NotePropertyValue @('P-R-001')
+  }
+  $cases | ForEach-Object { $_ | ConvertTo-Json -Compress -Depth 8 } | Set-Content -LiteralPath $casesPath -Encoding UTF8
+
   [pscustomobject]@{
     rule_id = 'P-R-001'
     statement = '求对方答应之事优先看应爻动态'
     status = 'candidate'
+    scope = '事业'
+    trigger = '求对方答应'
+    introduced_at = '2026-01-02T10:00:00+08:00'
     supporting_cases = @('P-2026-0001', 'P-2026-0002', 'P-2026-0003')
     counter_cases = @()
     confidence = 0.85

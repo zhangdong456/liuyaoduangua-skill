@@ -15,6 +15,10 @@
 - `counter_cases`：反例 ID
 - `confidence`：当前置信度
 - `status`：candidate / active / retired
+- `introduced_at`：首次提出规则的时间，不得为了通过门槛向前改写
+- 支持案例至少来自 3 个不同 `event_id`；至少 1 个事件在提出规则后预登记 `prediction.shadow_rules`，候选影子判断记录于 `prediction.shadow_predictions`，不能改变正式预测
+- 每个已复盘案例须记录 `review.checked_rules`（包括判定不适用）、`supported_rules`、`counter_rules` 和 `rule_checks`（适用性、理由）。存在反例或未检查案例时不升级
+- 升级前运行 `test-rule-evidence.ps1`；它只给资格结果，不自动改状态。新反馈构成反例时 active 立即退为 candidate 或 retired，缩小范围须新建规则版本并重新验证
 
 ## 注册原则
 

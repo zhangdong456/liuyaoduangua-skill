@@ -2,25 +2,34 @@
 param(
   [Parameter(Mandatory = $true)][string]$Query,
   [int]$Top = 5,
-  [string]$IndexPath = (Join-Path $PSScriptRoot 'index.jsonl')
+  [ValidateSet('prediction', 'review')][string]$Mode = 'prediction',
+  [string]$IndexPath
 )
 
 $ErrorActionPreference = 'Stop'
+$scriptRoot = $PSScriptRoot
+if ([string]::IsNullOrWhiteSpace($scriptRoot)) {
+  $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
+if ([string]::IsNullOrWhiteSpace($IndexPath)) {
+  $IndexPath = Join-Path $scriptRoot 'index.jsonl'
+}
 if (-not (Test-Path -LiteralPath $IndexPath)) {
   throw "Index not found: $IndexPath. Run build-index.ps1 first."
 }
 
 $terms = [regex]::Matches($Query.ToLowerInvariant(), '[\p{L}\p{N}]+') | ForEach-Object Value | Select-Object -Unique
-$hits = foreach ($line in Get-Content -LiteralPath $IndexPath) {
+$hits = foreach ($line in Get-Content -Encoding UTF8 -LiteralPath $IndexPath) {
   if ([string]::IsNullOrWhiteSpace($line)) { continue }
-  $item = $line | ConvertFrom-Json
+    $item = $line | ConvertFrom-Json
+    if ($Mode -eq 'prediction' -and $item.source_type -eq 'personal_rule' -and $item.status -ne 'active') { continue }
   $haystack = (($item.text, $item.topic, $item.keywords, $item.rule_ids) -join ' ').ToLowerInvariant()
   $score = 0
   foreach ($term in $terms) {
     if ($haystack.Contains($term)) { $score++ }
   }
   if ($score -gt 0) {
-    [pscustomobject]@{ score = $score; source_id = $item.source_id; source_type = $item.source_type; path = $item.path; text = $item.text }
+    [pscustomobject]@{ score = $score; source_id = $item.source_id; source_type = $item.source_type; path = $item.path; text = $item.text; status = $item.status; rule_id = $item.rule_id; case_id = $item.case_id; validation = $item.validation }
   }
 }
 
